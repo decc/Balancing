@@ -1,0 +1,100 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{DECC}[2012/02/17 DECC colour scheme and layout]
+%%
+% The following extensions to tabular are used to typeset the document
+% metadata block on the title page
+% 
+\RequirePackage{array}     % For formatting in table col specifications
+\RequirePackage{colortbl}  % For coloured rules in tables
+\RequirePackage{tabularx}  % For tables that span the textwidth
+%%
+% Definitions for the DECC colour scheme.
+% Colours are available as \textcolor{decc-red}{some text}, etc.
+%
+\RequirePackage{xcolor}
+\definecolorset{cmyk}{decc-}{}{cyan,1,0,0,0; orange,0,0.58,1,0; red,0.08,1,0.79,0.28; green,0.25,0.03,1,0.35; purple,0.67,0.92,0,0; blue,1,0.36,0.03,0.21}
+%%
+% Page layout -- NOTE: Assumes A4 paper (210 mm x 297 mm)
+%
+% The textwidth is 2/3 the paper width, inset equally by 1/6 on each side.
+% The text aspect ratio is the same as the paper aspect ratio.
+%
+\RequirePackage{geometry}
+\geometry{scale = 0.667}
+\geometry{left = 35mm, bottom = 49.5mm} % = 1/6 paperwidth/height
+\geometry{marginparwidth = 17.5mm, marginparsep = 8.75mm}
+\geometry{headsep = 12.38mm, footskip = 24.75mm} 
+\geometry{headheight = 14pt} % because fancyhdr told me to
+\AtBeginDocument{\linespread{1.05}} % Because the line length is rather
+                                % long. A4 is really not a fun size to
+                                % work with.
+%%
+% Use small section headers
+%
+\RequirePackage[small]{titlesec}
+\titleformat*{\subsubsection}{\itshape}
+%%
+% Add missing hyphenatation
+%
+\hyphenation{Din-or-wig elec-tric-ity over-night}
+
+%% Additional meta-data (author, title, and date are already defined)
+%
+\def\@publicationseries{\relax}
+\newcommand{\publicationseries}[1]{\gdef\@publicationseries{#1}}
+\def\@contact{As author}
+\newcommand{\contact}[1]{\gdef\@contact{#1}}
+\def\@protectivemarking{Not protectively marked}
+\newcommand{\protectivemarking}[1]{\gdef\@protectivemarking{#1}}
+\def\@status{Draft}
+\newcommand{\status}[1]{\gdef\@status{#1}}
+\def\@recordnumber{\relax}
+\newcommand{\recordnumber}[1]{\gdef\@recordnumber{#1}}
+%
+\newcommand\makecoversheet{
+\begin{titlepage}%
+\begin{center}
+ \vspace{49.5mm}
+ {\large\scshape\MakeLowercase{\@title}}%
+ \smallskip\par%
+ \textcolor{decc-cyan}{\rule[0.5ex]{\textwidth}{1pt}}\par%
+ \smallskip\par%
+ \@author
+\end{center}
+\vfill
+\begingroup
+\arrayrulecolor{decc-cyan}
+\setlength{\extrarowheight}{1.5ex}
+\begin{tabularx}{\textwidth}
+{|>{\rule[-2ex]{0pt}{0pt}\sffamily}p{52.5mm}|X|}
+\hline 
+\textcolor{decc-cyan}{Series and number:}    & \@publicationseries \\ \hline
+\textcolor{decc-cyan}{Contact:}              & \@contact \\ \hline
+\textcolor{decc-cyan}{Protective marking:}   & \@protectivemarking  \\ \hline
+\textcolor{decc-cyan}{Status:}               & \@status \\ \hline
+\textcolor{decc-cyan}{Publication date:}     & \@date \\ \hline
+\textcolor{decc-cyan}{MATRIX record number:} & \textsc{\MakeLowercase{\@recordnumber}} \\ \hline
+\end{tabularx}
+\arrayrulecolor{black}\endgroup
+\end{titlepage}
+\if@twoside{\pagestyle{empty}\setcounter{page}{0}\cleardoublepage}\fi
+}
+%
+% \maketitle clobbers \@author and \@title. We would like the title in
+% the running head, so need to save it
+%
+\let\savemaketitle\maketitle
+\def\maketitle{\let\@savetitle\@title\savemaketitle}
+%
+\renewcommand{\ps@headings}{%
+\renewcommand{\@oddfoot}{\hfil\thepage\hfil}
+\renewcommand{\@oddhead}{\MakeUppercase{\@protectivemarking}%
+\hfill%
+\@savetitle\if\@publicationseries\relax\else\ (\@publicationseries)\fi} 
+\let\@evenfoot\@oddfoot\let\@evenhead\@oddhead}
+\pagestyle{headings}
+
+
+
+
+

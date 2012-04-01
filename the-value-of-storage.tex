@@ -1,0 +1,220 @@
+\documentclass[12pt, a4paper]{article}
+%
+% DECC colour scheme, layout, and other niceties
+\usepackage{DECC}
+%
+% Use Latin Roman fonts and unicode input
+\usepackage[utf8]{inputenc}          
+\usepackage[T1]{fontenc}              
+\usepackage[tt={monowidth}]{cfr-lm} 
+%
+% Personal preferences
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[font = small, margin = 8.75mm]{caption}
+\usepackage[load-configurations=abbreviations, per-mode=symbol, mode=text]{siunitx}
+\DeclareSIUnit{\Wh}{Wh}
+\DeclareSIUnit{\kWh}{\kilo\Wh}\DeclareSIUnit{\MWh}{\mega\Wh}\DeclareSIUnit{\GWh}{\giga\Wh}
+\usepackage{microtype} % Because we care
+%
+%
+\title{The Value of Storage}
+\author{James Geddes} 
+\protectivemarking{Unclassified}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+Suppose that a large amount of pumped storage—perhaps equal to another
+Dinorwig—were added to the electricity system for free. What is the
+value of this storage? That is, what is the net benefit to society of
+the addition, if it could be done with no cost? This note is an
+attempt to see how far we can get in answering that question without
+resorting to a detailed model.
+
+
+\section{Overview of the approach}
+
+If there is value from adding storage, where does it come from? In the
+\emph{short-run} (that is, without changing the existing
+infrastructure) the use of storage may replace high--variable cost
+generation with low--variable cost generation. In the \emph{long-run}
+(that is, allowing the optimum configuration of the system to adjust
+to the presence of storage) there will be additional value as a
+cheaper mix of generation will be available.
+
+Now, the value of storage per ``unit'' of storage, will change if a
+sufficiently large amount of storage is added. Throughout this note,
+we will assume instead that the amount of storage added is ``small'',
+in whatever sense is appropriate.\footnote{What ``small'' means is a
+  little unclear. For calculations of the short-run, it presumably
+  means that prices are not affected.} More generally, the value of
+storage will depend upon the initial state of the system.
+
+Specifically, in the short-run, there are three sources of value:
+\begin{enumerate}
+\item The transfer of energy from times when low-cost generation is
+  under-used to times when high-cost generation is otherwise required;
+\item The provision of some kinds of reserve, particularly frequency
+  response;
+\item Potentially, removal of some local transmission constraints on
+  the boundary of the region containing the storage. 
+\end{enumerate}
+
+In the long-run, the optimum configuration of the system will
+change---presumably, there will be more baseload plant and less
+peaking plant---and the whole system will be lower cost that it would
+have been otherwise. 
+
+In this note, we consider only the arbitrage value: that is, we do not
+consider value from the provision of reserve or removal of
+transmission constraints.
+
+\subsection{The parameters of storage}
+
+The ``size'' of storage is characterised by two numbers: its ``power
+capacity,'' $C_P$, the rate at which energy can be pumped in to or out
+of storage, and its ``storage capacity,'' $C_E$, the total amount of
+energy that can be stored. (This is in contrast to generation, to
+which only the power capacity applies.) Dinorwig, for example, has
+$C_P \approx \SI{1.8}{\GW}$ and $C_E\approx \SI{9.1}{\GWh}$.
+
+In general, the optimum use of a particular storage device depends in
+some complicated way on these two parameters. We shall consider two
+simplified kinds: one which is \emph{rate limited} (that is, ``takes a
+long time to charge up'') and one which is \emph{volume limited}
+(that is, ``becomes full very quickly''). Here, ``quickly'' or ``a
+long time'' is with reference to the timescales over which prices tend
+to change. At present, demand (and hence price) typically varies
+strongly over the course of a day (though it also changes over the
+year) and we shall use a reference period of a day. Thus, a
+rate-limited storage unit is one for which $C_E/C_P \gg \SI{1}{\day}$
+and a volume-limited unit is one for which $C_E/C_P \ll
+\SI{1}{\day}$. Dinorwig is somewhat volume-limited under this
+definition, having $C_E/C_P \approx \SI{5}{\hour}$.
+
+Storage is also affected by the loss of energy during the round-trip
+from taking in energy to producing it again. A typical storage unit is
+about~\SI{75}{\percent} efficient, which is the figure we will use in
+this note.
+
+
+\section{The short run}
+
+\subsection{Rate-limited storage}
+
+One immediate value of storage comes from moving some energy from
+times when it is cheap to generate to times when it is costly to
+generate. One way to get a handle on this is to look at prices.
+ 
+If we pretend that the demand curve is completely inelastic then we
+might assume that, except when there is shortage, the spot price of
+electricity is equal to the short-run marginal cost of
+generation. Under this assumption, the revenue accruing to a storage
+unit from buying low and selling high is equal to the reduction in
+generation cost.
+ 
+\begin{figure}[htb]
+\centering
+\includegraphics{pd.pdf}
+\caption{Price-duration curve for NETA from 2010. Shown also are
+  approximate marginal costs of generation (including fuel costs and
+  carbon costs, but excluding start-up costs) based on average fuel
+  costs over the year. Source: Price shown is the Market Index price
+  from Elexon (based on intra-day trades); fuel costs from DECC
+  Quarterly Energy Prices; emissions factors from Defra; power station
+  efficiencies from DUKES.}
+\label{fig:pd}
+\end{figure}
+
+Figure~\ref{fig:pd} shows the price-duration curve from 2010. Most of
+the time, the price is set by the marginal cost of generation (the
+interquartile range over the whole year is \SI{34}[\pounds]{\per\MWh}
+to \SI{46}[\pounds]{\per\MWh}) with very occasional periods of much
+higher prices (the maximum over the year was
+\SI{326}[\pounds]{\per\MWh}. We can estimate how much revenue a
+storage unit could earn, by assuming that it buys low and sells
+high. If the storage is rate limited it could, in principle, buy as
+much as possible at the lowest price of the year and sell at the
+highest; buy at the second-lowest price and sell at the
+second-highest; and so on, at least until the round-trip losses made
+the sale unprofitable.
+
+For 2010, a storage unit following this procedure would have earned,
+in revenue, \SI{27200}[\pounds]{\per\MW}, or
+\SI{27.2e6}[\pounds]{\per\GW}. (The value is given per gigawatt,
+because we are assuming the storage unit is rate limited and therefore
+stores or discharges \SI{1}{\GWh} during each hour of operation for
+each \si{\GW} of power capacity.) By way of comparison, the amortised
+cost, over~20 years, of a \SI{1e9}[\pounds]{} capital investment at a
+\SI{10}{\percent} discount rate is about \SI{110e6}[\pounds]{} per
+year. At \SI{3.5}{\percent} over 40 years (Dinorwig is already 30
+years old) the amortised cost is \SI{46e6}[\pounds]{} per
+year. Presumably this is why there's not an awful lot of pumped
+storage around at present.
+
+We can repeat the calculation for other years. At present, we have
+price data for complete years from 2004 to
+2011. Table~\ref{tab:values} shows the total obtainable value from
+each of these years. One point to note is that the value is not
+particularly stable from year to year.
+\begin{table}
+\tstyle % For tabular (non-proportional) figures
+\centering
+\begin{tabular}{lS[round-mode = places, round-precision = 1,
+    fixed-exponent = 3,
+    table-format = 2.1,
+    table-omit-exponent,
+    table-alignment = right,
+    text-rm = \tstyle]} \toprule
+Year & {Value (\SI{e6}[\pounds]{\per\GW})} \\ \midrule
+% 2003 & 19419.881 \\ Full year of price data not available
+2004 & 17654.280 \\
+2005 & 53317.927 \\
+2006 & 58508.910 \\
+2007 & 50164.324 \\
+2008 & 98665.124 \\
+2009 & 45088.914 \\ 
+2010 & 27196.531 \\
+2011 & 14769.648 \\ \bottomrule
+% 10 2012 &  3732.725 \\ Full year of price data not available
+\end{tabular}
+\caption{The maximum value that would have been capturable by \SI{1}{\GW} of
+  rate-limited storage (that is, storage having unlimited capacity).} 
+\label{tab:values}
+\end{table}
+
+\subsection{Volume-limited storage}
+
+Volume-limited storage fills up quickly (compared to price
+movements). If the operator of such storage bought at the lowest price
+of the year and held on to that energy to sell at the highest price,
+the storage would be unavailable to take advantage of any other price
+differences during the year. So volume-limited storage will more
+profitably be used if the operator buys and sells every cycle.
+
+Whereas rate-limited storage will either be buying or selling in
+nearly every period, volume-limited storage will only buy at isolated
+lows and sell at isolated highs. Compared to rate-limited storage, it
+will ``miss out'' because it will not capture intermediate price
+differentials; on the other hand, it will always buy and sell as much
+as it can at the extremes.
+
+
+
+
+
+\begin{figure}[htb]
+\centering
+\includegraphics{minmax.pdf}
+\caption{Daily maxima and minima in the market index data
+  price. (Labels on the date axis refer to the beginning of the
+  calendar year.)}
+\label{fig:maxmin}
+\end{figure}
+
+
+\end{document}
+
+
