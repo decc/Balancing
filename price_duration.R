@@ -1,15 +1,17 @@
 ## This file computes, draws, and annotates an annual price-duration
 ## curve for the UK wholesale electricity market
 
-library("ggplot2")
-library("plyr")
-library("scales")
+library("ggplot2")   # charts
+library("plyr")      # split-apply-combine analysis
+library("scales")    # support for ggplot2
 library("grid")      # for unit
 library("lubridate") # for dates and times
 
 source("theme_DECC.R")
 
-## GET DATA
+
+## Load price data and transform to usable format.
+## ===============================================
 
 ## Market index price data for 2010.
 ##
@@ -27,6 +29,7 @@ load.mid <- function(f) {
            col.name = c("d", "sett.period", "MIDP.id", "volume", "price"),
            colClasses = c("character", "integer", "factor", "numeric", "numeric"))
 }
+
 
 ## Downloads prior to 2010 contain dates as, eg, "31 December 2009".
 ## The 2010 download contains dates as, eg, "01-Jan-10".
@@ -54,43 +57,46 @@ mid.3 <- data.frame(sett.date = as.Date(mid.3$d, format = "%d-%b-%Y"),
                    subset(mid.3, select = -c(d)))
 
 mid <- idata.frame(rbind(mid.1, mid.2, mid.3)) # use immutable dataframe for speed
+rm(mid.1, mid.2, mid.3) # Declutter namespace
+
 
 ## Compute average price across all data providers for each settlement
 ## period. TAKES A LONG TIME TO COMPLETE.
 
-prices.all <- ddply(mid,
+prices <- ddply(mid,
                     .(sett.date, sett.period),
                     summarise, volume = sum(volume), price = weighted.mean(price, volume),
                     .progress = "text"
                     )
 
-# Sort the periods by decreasing price within each year 
+## Add useful date fields. 
+prices$year     <- year(prices$sett.date)
+prices$datetime <- as.POSIXct(prices$sett.date, tz = "Europe/London") +
+  dhours((prices$sett.period - 1) * 0.5)
+prices$month    <- month(prices$sett.date, label = TRUE, abbr = FALSE) # Add the names of the months
 
-prices.all$year <- year(prices.all$sett.date)
-prices.all$datetime <- as.POSIXct(prices.all$sett.date, tz = "Europe/London") +
-  dhours((prices.all$sett.period - 1) * 0.5)
-prices.all$month <- month(prices.all$sett.date, label = TRUE, abbr = FALSE) # Add the names of the months
+## Sort the settlement periods by decreasing price within each year 
 
-prices <- prices.all[!is.na(prices.all$price),
-                     c("year", "price")] # Drop periods with NA av. price
-                                         # (these occur when the
-                                         # market index volume was
-                                         # less than the threshold)
-
-price_duration <- ddply(prices,
-                        .(year),
+price_duration <- ddply(prices[!is.na(prices$price), c("year", "price")],   # remove NAs ...
+                        .(year),  # ... and split by year
                         transform,
-                        index = (seq_along(price) - 0.5) / length(price),
-                        price = sort(price, decreasing = TRUE),
+                        index = (seq_along(price) - 0.5) / length(price), # add a settlement period index within each year 
+                        price = sort(price, decreasing = TRUE), # and sort by price
                         .progress = "text")
-                        
+
+
+## Compute marginal costs of production in 2010
+## ============================================
 
 ## Average fuel prices, 2010
+## -------------------------
 ## Source: DECC, Quarterly Energy Prices, Table 3.2.1 (December 2011)
 ## http://www.decc.gov.uk/en/content/cms/statistics/energy_stats/prices/prices.aspx
 ## Units:  pence / kWh
 
 ## Emissions factors, 2009
+## -----------------------
+
 ## Source: Defra, August 2011 Guidelines to Defra / DECC's Greenhouse
 ## Gas Conversion Factors for Company Reporting
 ## Gas, Coal (electricity generation), and Fuel Oil
@@ -101,18 +107,20 @@ fuels <- data.frame(row.names = c("Gas", "Coal", "Oil"),
                     emissions = c(0.18360, 0.32518, 0.26744))
 
 ## Cost of Carbon, 2010
+## --------------------
+
 ## Source: UK Debt Management Office, result of auction held 8 July
-## 2010, press notice. Euro / GBP exchange rate taken from same document 
-## Units: GBP / tonne CO2
+## 2010, press notice (€14.65/tonne). Euro / GBP exchange rate
+## (0.8343) taken from same document Units: GBP / tonne CO2
 
 co2.cost <- 14.65 * 0.8343
-
 fuels$net.price <- fuels$price + fuels$emissions * co2.cost * (100/1000)
 
-
 ## Power station efficiencies, 2010
+## --------------------------------
+
 ## Source: DUKES 2011, Table 5.10 and others (see below)
-## Units % (by Gross Calorific Value)
+## Units: % (by Gross Calorific Value)
 
 ## Assumes coal generation own-use is 5%; CCGT / OCGT is 1%; (These
 ## are approximate figures computed from electricity fuel use,
@@ -138,10 +146,15 @@ generation[, "cost"] <- fuels[c("Coal", "Gas", "Gas", "Oil"),
 generation[, "label.x"] = rep(0.7, 4)
 generation[, "label.y"] = c(90, 60, 120, 150)
 
+
+## Produce plots
+## =============
+
 ## Set up output device
 quartz(width = 105/25.4, height = 105/25.4/sqrt(2), pointsize = 10,
        family = "Helvetica", type = "pdf", file = "pd.pdf")
 
+## Plot price_duration curve
 qplot(data = price_duration[price_duration$year == 2010, ],
       index, price, geom = "line", size = I(0.7),
       xlab = "Fraction of year", ylab = "Wholesale price (GBP / MWh)") +
@@ -164,11 +177,15 @@ dev.off()
 
 
 
-### CALCULATE MAXIMUM EXTRACTABLE VALUE
+## CALCULATE MAXIMUM EXTRACTABLE VALUE
+## ===================================
 
 storage.eff <- 0.75 # Round-trip efficiency
 
-## Rate-limited, assumed 1 MW power, so 0.5 MWh energy per settlement period.
+## Rate-limited storage
+## --------------------
+
+## Assumes 1 MW power, so 0.5 MWh energy per settlement period.
 
 values <- ddply(price_duration,
                 .(year),
@@ -183,11 +200,14 @@ values <- ddply(price_duration,
                 .progress = "text")
 
                
-## Volume-limited, assumes 1 MWh storage (so that 1 MWh may be stored
+## Volume-limited storage
+## ----------------------
+
+## Assumes 1 MWh storage (so that 1 MWh may be stored
 ## per settlement period). Note that this requires a minimum 2 MW power.
 
 ## Max and min prices by day
-prices.lowhigh <- ddply(prices.all,
+prices.lowhigh <- ddply(prices,
                         .(sett.date),
                         summarise, max = max(price, na.rm = TRUE), min = min(price, na.rm = TRUE),
                         .progress = "text")
@@ -201,34 +221,56 @@ values <- ddply(prices.lowhigh,
                 summarise, total = sum(profit),
                 .progress = "text")
 
-
-## Other plots
-qplot(data = pd,
-      index, price, geom = "line", size = I(0.7), colour = as.factor(year),
-      xlab = "Fraction of year", ylab = "Wholesale price (GBP / MWh)") +
-  scale_x_continuous(trans = "logit") + scale_y_log10() +
-  scale_colour_brewer(palette = "Spectral") + theme_DECC()
-
-qplot(sett.period, price, data = subset(prices.all, (year(sett.date) == 2010)),
-      group = yday(sett.date),
-      geom = "line",
-      ylim = c(0,500),
-      alpha = I(0.2)) + facet_wrap(~ month) + theme_DECC()
-
-
-## Min and max prices by day
+## Plot of minimum and maximum prices by day
+## -----------------------------------------
 
 quartz(width = 140/25.4, height = 140/25.4/sqrt(2), pointsize = 10,
        family = "Helvetica", type = "pdf", file = "minmax.pdf")
 
 ggplot(prices.lowhigh, aes(sett.date)) +
-  scale_y_continuous(name = "Price (GBP/MWh)") +
+  scale_y_continuous(name = "Price (\u{00A3} / MWh)") +
   scale_x_date(name = "Date", breaks = date_breaks("1 year"), labels = date_format("%Y")) +
   geom_line(aes(y = min), size = 0.2, colour = DECC.colours$cyan) +
   geom_line(aes(y = max), size = 0.2, colour = DECC.colours$orange) +
   theme_DECC()
 
 dev.off()
+
+
+## Other plots
+## ===========
+
+## Price-duration plot for each year
+qplot(data = price_duration,
+      index, price, geom = "line", size = I(0.7), colour = as.factor(year),
+      xlab = "Fraction of year", ylab = "Wholesale price (GBP / MWh)") +
+  scale_x_continuous(trans = "logit") + scale_y_log10() +
+  scale_colour_brewer(palette = "Spectral") + theme_DECC()
+
+## Daily prices for each month in 2010
+quartz(width = 400/25.4, height = 400/25.4/sqrt(2), pointsize = 16,
+       family = "Helvetica", type = "pdf", file = "allprices.pdf")
+
+qplot(sett.period * 0.5, price, data = subset(prices, (year(sett.date) == 2010)),
+      group = yday(sett.date),
+      geom = "line",
+#      ylim = c(0,500),
+      alpha = I(0.15), colour = I(DECC.colours$cyan),
+      main = "Daily electricity prices 2010",
+      xlab = "Time of day",
+      ylab = "Wholesale price (\u{00A3} / MWh)") + facet_wrap(~ month) + theme_DECC()
+
+dev.off()
+
+## Another approach to plotting the price range
+ggplot(prices, aes(x = sett.date, y = price)) +
+  scale_y_continuous(name = "Price (GBP/MWh)") +
+  scale_x_date(name = "Date", breaks = date_breaks("1 year"), labels = date_format("%Y")) +
+  stat_summary(fun.data = "median_hilow", colour = hex(mixcolor(0.8, RGB(1,1,1), hex2RGB(DECC.colours$cyan))), 
+               geom = "linerange", width = 0.2) +
+  stat_summary(fun.y = "median", colour = DECC.colours$orange, geom = "line", size = 0.2) +
+  theme_DECC()
+               
 
 qplot(sett.date, max/min, data = prices.lowhigh, size = I(1)) + geom_smooth(method = "loess", span = 0.1, se = FALSE)
                                                  
