@@ -16,6 +16,7 @@
 \usepackage[load-configurations=abbreviations, per-mode=symbol, mode=text]{siunitx}
 \DeclareSIUnit{\Wh}{Wh}
 \DeclareSIUnit{\kWh}{\kilo\Wh}\DeclareSIUnit{\MWh}{\mega\Wh}\DeclareSIUnit{\GWh}{\giga\Wh}
+\DeclareSIUnit{\year}{y}
 \usepackage{microtype} % Because we care
 %
 %
@@ -162,26 +163,31 @@ particularly stable from year to year.
 \begin{table}
 \tstyle % For tabular (non-proportional) figures
 \centering
-\begin{tabular}{lS[round-mode = places, round-precision = 1,
+\begin{tabular}{l*{2}{S[round-mode = places, round-precision = 1,
     fixed-exponent = 3,
     table-format = 2.1,
     table-omit-exponent,
     table-alignment = right,
-    text-rm = \tstyle]} \toprule
-Year & {Value (\SI{e6}[\pounds]{\per\GW})} \\ \midrule
-% 2003 & 19419.881 \\ Full year of price data not available
-2004 & 17654.280 \\
-2005 & 53317.927 \\
-2006 & 58508.910 \\
-2007 & 50164.324 \\
-2008 & 98665.124 \\
-2009 & 45088.914 \\ 
-2010 & 27196.531 \\
-2011 & 14769.648 \\ \bottomrule
-% 10 2012 &  3732.725 \\ Full year of price data not available
+    text-rm = \tstyle]}} \toprule
+         & \multicolumn{2}{c}{Value (\SI{e6}[\pounds]{\per\year})} \\ \cmidrule{2-3}
+ & {Rate-limited} & {Storage-limited} \\ 
+ & {(per \si{\GW})}      & {(per \si{\GWh})} \\ \midrule
+% 2003    & 19419.881 &                         5438.9906 \\ Full year of price data not available
+2004      & 17654.280 &                         6028.7229 \\
+2005      & 53317.927 &                         9957.0150 \\
+2006      & 58508.910 &                        10179.2800 \\
+2007      & 50164.324 &                        10251.3725 \\
+2008      & 98665.124 &                        19306.3550 \\
+2009      & 45088.914 &                         9696.6875 \\ 
+2010      & 27196.531 &                         5828.7850 \\
+2011      & 14769.648 &                         4398.7636 \\ \bottomrule
+% 10 2012 & 3732.725  &                          879.1075 \\ Full year of price data not available
 \end{tabular}
 \caption{The maximum value that would have been capturable by \SI{1}{\GW} of
-  rate-limited storage (that is, storage having unlimited capacity).} 
+  rate-limited storage (that is, storage having unlimited capacity)
+  and \SI{1}{\GWh} of storage-limited storage (that is, storage which
+  can charge and discharge effectively instantaneously). Note that
+  these are not directly comparable.} 
 \label{tab:values}
 \end{table}
 
@@ -199,11 +205,8 @@ nearly every period, volume-limited storage will only buy at isolated
 lows and sell at isolated highs. Compared to rate-limited storage, it
 will ``miss out'' because it will not capture intermediate price
 differentials; on the other hand, it will always buy and sell as much
-as it can at the extremes.
-
-
-
-
+as it can at the extremes. Figure~\ref{fig:minmax} shows the maximum
+and minimum daily prices from 2003 to early~2012.
 
 \begin{figure}[htb]
 \centering
@@ -211,8 +214,10 @@ as it can at the extremes.
 \caption{Daily maxima and minima in the market index data
   price. (Labels on the date axis refer to the beginning of the
   calendar year.)}
-\label{fig:maxmin}
+\label{fig:minmax}
 \end{figure}
+
+
 
 
 \end{document}

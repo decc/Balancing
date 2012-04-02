@@ -157,7 +157,7 @@ quartz(width = 105/25.4, height = 105/25.4/sqrt(2), pointsize = 10,
 ## Plot price_duration curve
 qplot(data = price_duration[price_duration$year == 2010, ],
       index, price, geom = "line", size = I(0.7),
-      xlab = "Fraction of year", ylab = "Wholesale price (GBP / MWh)") +
+      xlab = "Fraction of year", ylab = "Wholesale price (\u{00A3} / MWh)") +
   xlim(0,1) +
   theme_DECC() +
   geom_segment(aes(x = 0.45, y = cost*10, xend = 0.55, yend = cost*10),
@@ -185,7 +185,7 @@ storage.eff <- 0.75 # Round-trip efficiency
 ## Rate-limited storage
 ## --------------------
 
-## Assumes 1 MW power, so 0.5 MWh energy per settlement period.
+## Assumes 1 MW power, so 0.5 MWh energy per settlement period.
 
 values <- ddply(price_duration,
                 .(year),
@@ -271,6 +271,5 @@ ggplot(prices, aes(x = sett.date, y = price)) +
   stat_summary(fun.y = "median", colour = DECC.colours$orange, geom = "line", size = 0.2) +
   theme_DECC()
                
-
 qplot(sett.date, max/min, data = prices.lowhigh, size = I(1)) + geom_smooth(method = "loess", span = 0.1, se = FALSE)
                                                  
