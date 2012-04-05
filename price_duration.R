@@ -228,7 +228,7 @@ quartz(width = 140/25.4, height = 140/25.4/sqrt(2), pointsize = 10,
        family = "Helvetica", type = "pdf", file = "minmax.pdf")
 
 ggplot(prices.lowhigh, aes(sett.date)) +
-  scale_y_continuous(name = "Price (\u{00A3} / MWh)") +
+  scale_y_continuous(name = "Price (\u{00A3} / MWh)", limits = c(0,600), expand = c(0,0)) +
   scale_x_date(name = "Date", breaks = date_breaks("1 year"), labels = date_format("%Y")) +
   geom_line(aes(y = min), size = 0.2, colour = DECC.colours$cyan) +
   geom_line(aes(y = max), size = 0.2, colour = DECC.colours$orange) +
