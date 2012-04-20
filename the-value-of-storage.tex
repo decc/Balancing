@@ -208,6 +208,25 @@ will ``miss out'' because it will not capture intermediate price
 differentials; on the other hand, it will always buy and sell as much
 as it can at the extremes. 
 
+The above observations can be made more precise. Pretend that
+electricity is bought and sold in discrete time steps $t = 1, 2,
+3,\dots$, at a price, $p_t$, that is fixed for each time step. Suppose
+that a particular volume-limited storage unit has no round-trip
+losses. Then it is fairly easy to see that the optimal strategy for
+the storage operator (having perfect foresight) is to fill up at each
+local mimimum of price and to sell everything at each local
+maximum. (The operator should clearly sell or buy the maximum possible
+at each time step. Consider the case when $p_{t+1} > p_t$ and suppose
+that the storage is empty at time~$t$. If the optimal state at $t+1$
+is to be empty, it is better to buy at $t$ and sell at $t+1$; if the
+optimal state at $t+1$ is to be full, it is better to buy at $t$. In
+any event, therefore, it is better to buy at~$t$. The same argument
+applies \emph{mutatis mutandis} to the case when the storage is full
+at $t$, and to the two cases when $p_{t+1} < p_t$.)
+
+
+
+
 \begin{figure}[htb]
 \centering
 \includegraphics{minmax.pdf}
@@ -218,7 +237,7 @@ as it can at the extremes.
 \end{figure}
 
 Figure~\ref{fig:minmax} shows the maximum and minimum daily prices
-from 2003 to early~2012.
+from 2003 to early~2012. 
 
 
 \end{document}
