@@ -215,14 +215,36 @@ that a particular volume-limited storage unit has no round-trip
 losses. Then it is fairly easy to see that the optimal strategy for
 the storage operator (having perfect foresight) is to fill up at each
 local mimimum of price and to sell everything at each local
-maximum. (The operator should clearly sell or buy the maximum possible
-at each time step. Consider the case when $p_{t+1} > p_t$ and suppose
-that the storage is empty at time~$t$. If the optimal state at $t+1$
-is to be empty, it is better to buy at $t$ and sell at $t+1$; if the
-optimal state at $t+1$ is to be full, it is better to buy at $t$. In
-any event, therefore, it is better to buy at~$t$. The same argument
-applies \emph{mutatis mutandis} to the case when the storage is full
-at $t$, and to the two cases when $p_{t+1} < p_t$.)
+maximum. (I claim that the operator should buy or sell the maximum
+possible at each time step.) Now consider the case when $p_{t+1} > p_t$
+and suppose that the storage is empty at time~$t$. If the optimal
+state at $t+1$ is to be empty, it is better to buy at $t$ and sell at
+$t+1$; if the optimal state at $t+1$ is to be full, it is better to
+buy at $t$. In any event, therefore, it is better to buy at~$t$. The
+same argument applies \emph{mutatis mutandis} to the case when the
+storage is full at $t$, and to the two cases when $p_{t+1} < p_t$.)
+
+It is slightly harder to see what the optimal strategy is when there
+are round-trip losses. However, I claim that is is as follows. 
+
+Let the proportion of energy stored that is available for production
+be~$\alpha$, so that the round-trip loss as a proportion of energy
+stored is $1-\alpha$. The optimal strategy will only consider selling
+when the price is a local maximum. (If $p_{t-1} > p_t$, then it's
+clearly better to sell at $t-1$ than to sell at~$t$; if $p_t <
+p_{t+1}$ then it's better to arrive at $t+1$ full than to have to
+repurchase at~$t+1$.) So consider a local maximum of price, at time
+$t_1$, say. 
+
+If there is no later price that is greater than $p_{t_1}$ then it is
+clearly optimal to sell at $t_1$. Otherwise, let $t_2$ be the first
+time after $t_1$ such that $p_{t_2} > p_{t_1}$. Between $t_1$ and
+$t_2$ there must be at least one local minimum of price; and, of these
+minima, a smallest. Let $t_3$ be the time at which the price is a
+minimum over the entire interval between $t_1$ and~$t_2$.
+
+Now, we consider whether to sell at $t_1$
+
 
 
 
