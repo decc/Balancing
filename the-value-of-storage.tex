@@ -228,22 +228,32 @@ It is slightly harder to see what the optimal strategy is when there
 are round-trip losses. However, I claim that is is as follows. 
 
 Let the proportion of energy stored that is available for production
-be~$\alpha$, so that the round-trip loss as a proportion of energy
-stored is $1-\alpha$. The optimal strategy will only consider selling
-when the price is a local maximum. (If $p_{t-1} > p_t$, then it's
-clearly better to sell at $t-1$ than to sell at~$t$; if $p_t <
-p_{t+1}$ then it's better to arrive at $t+1$ full than to have to
-repurchase at~$t+1$.) So consider a local maximum of price, at time
-$t_1$, say. 
+be~$\alpha$ (so that the round-trip loss as a proportion of energy
+stored is $1-\alpha$). The optimal strategy will only consider buying
+when the price is a local minimum. (A strategy which buys when the
+price was lower at the previous timestep can be converted to a more
+profitable one by buying at the previous timestep; a strategy which
+buys when the price is lower at the next timestep can be made more
+profitable by buying at the later timestep.) So consider a local
+minimum of price, at time $t_1$, say.
 
-If there is no later price that is greater than $p_{t_1}$ then it is
-clearly optimal to sell at $t_1$. Otherwise, let $t_2$ be the first
-time after $t_1$ such that $p_{t_2} > p_{t_1}$. Between $t_1$ and
-$t_2$ there must be at least one local minimum of price; and, of these
-minima, a smallest. Let $t_3$ be the time at which the price is a
-minimum over the entire interval between $t_1$ and~$t_2$.
+Find the first time at which the price is greater than
+$p_{t_1}/\alpha$, say~$t_2$. If there is no such time, then one can
+only make a loss by buying at $t_1$, so do not buy. Now buy at $t_1$
+\emph{unless} there is a minimum between $t_1$ and $t_2$ whose price
+is lower than that at $t_1$. If this is the case, do not buy at $t_1$
+but set $t_1$ to be the time of the first such minimum and repeat the
+procedure. 
 
-Now, we consider whether to sell at $t_1$
+In any case, next consider the maximum at $t_2$ and repeat the above,
+swapping `maximum' and `minimum' as necessary.
+
+
+
+
+ 
+
+
 
 
 
