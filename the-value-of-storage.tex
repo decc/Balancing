@@ -224,40 +224,35 @@ buy at $t$. In any event, therefore, it is better to buy at~$t$. The
 same argument applies \emph{mutatis mutandis} to the case when the
 storage is full at $t$, and to the two cases when $p_{t+1} < p_t$.)
 
-It is slightly harder to see what the optimal strategy is when there
-are round-trip losses. However, I claim that is is as follows. 
+When the storage is not lossless, the procedure is slightly more
+involved.
 
 Let the proportion of energy stored that is available for production
 be~$\alpha$ (so that the round-trip loss as a proportion of energy
 stored is $1-\alpha$). The optimal strategy will only consider buying
-when the price is a local minimum. (A strategy which buys when the
+when the price is a local minimum (a strategy which buys when the
 price was lower at the previous timestep can be converted to a more
 profitable one by buying at the previous timestep; a strategy which
 buys when the price is lower at the next timestep can be made more
-profitable by buying at the later timestep.) So consider a local
-minimum of price, at time $t_1$, say.
+profitable by buying at the later timestep.)
 
-Find the first time at which the price is greater than
-$p_{t_1}/\alpha$, say~$t_2$. If there is no such time, then one can
-only make a loss by buying at $t_1$, so do not buy. Now buy at $t_1$
-\emph{unless} there is a minimum between $t_1$ and $t_2$ whose price
-is lower than that at $t_1$. If this is the case, do not buy at $t_1$
-but set $t_1$ to be the time of the first such minimum and repeat the
-procedure. 
+So consider a local minimum of price, at time $t_1$, say. The idea is
+to buy at $t_1$ if it is possible to make a profit by doing so, unless
+there is some way to make a greater profit. The procedure is as
+follows: Find the first time after $t_1$ at which the price is greater
+than $p_{t_1}/\alpha$: say,~$t_2$. (If there is no such time, then one
+can only make a loss by buying at $t_1$, so do not buy.) Now buy at
+$t_1$ \emph{unless} there is a minimum between $t_1$ and $t_2$ whose
+price is lower than that at $t_1$. If this is the case, do not buy at
+$t_1$ but set $t_1$ to be the time of the first such minimum and
+repeat the procedure.
 
 In any case, next consider the maximum at $t_2$ and repeat the above,
 swapping `maximum' and `minimum' as necessary.
 
-
-
-
- 
-
-
-
-
-
-
+Notice that if the ratio between successive maxima and minima is
+greater than $1/\alpha$ then the above procedure prescribes buying at
+every minimum and selling at every maximum. 
 
 \begin{figure}[htb]
 \centering
@@ -269,7 +264,16 @@ swapping `maximum' and `minimum' as necessary.
 \end{figure}
 
 Figure~\ref{fig:minmax} shows the maximum and minimum daily prices
-from 2003 to early~2012. 
+from 2003 to early~2012. For pumped hydro the round-trip efficiency is
+about $\alpha = 0.75$. It turns out that the ratio between the maximum
+and minimum price on any given day was less than $1/0.75$ on only 15
+days in this period, and 13 of those days were in~2011. Thus a
+reasonable procedure for storage-limited storage to follow is simply
+to buy at the low of each day and sell at the high, assuming there is
+a profit to be made on that day. The results of following this
+procedure are also shown in table~\ref{tab:values}.
+
+\subsection{Estimating the short-run value}
 
 
 \end{document}
