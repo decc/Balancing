@@ -66,6 +66,16 @@ fuels$net.price <- fuels$price + fuels$emissions * co2.cost * (100/1000)
 
 ## http://www.eex.com/en/Market%20Data/Trading%20Data/Emission%20Rights/EU%20Emission%20Allowances%20%7C%20Spot/EU%20Emission%20Allowances%20Chart%20%7C%20Spot/spot-eua-chart/2012-04-30/1/1/a
 
+## Exchange rates, EUR to GBP
+## --------------------------
+
+## Source: HMRC, http://www.hmrc.gov.uk/exrate/european-union.htm
+## Units: Sterling value of currency unit (GBP / EUR).
+
+xrate <- data.frame(year = 1998:2011,
+                    EUR = c(0.67645, 0.6575918985, 0.608754
+
+
 ## Emissions factors, 2009
 ## -----------------------
 
