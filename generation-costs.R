@@ -1,11 +1,18 @@
+library("plyr")
+
 ## Approximate generation costs by fuel type
 ## =========================================
 
-## Estimates generation costs from input fuel prices, carbon prices,
-## and generation efficiencies.
+## Estimates marginal generation costs from input fuel prices, carbon
+## prices, and generation efficiencies.
 
 ## Output: A table, with the following columns:
-
+##   year - calendar year
+##   coal - cost of coal-fired generation
+##   oil  - cost of oil-fired generation
+##   gas  - cost of gas-fired generation
+##
+## Units are GBP / MWh
 
 
 ## GDP deflator, market prices
@@ -58,7 +65,16 @@ fuel.price <- data.frame(year = 1992:2011,
 ## ICE-ECX European emissions -- emissions index (futures contract)
 ## Downloaded 30 April 2012
 
-co2 <- read.csv(file = "historic-co2-prices.csv", header = TRUE)
+co2 <- read.csv(file = "historic-co2-prices.csv",
+                header = TRUE,
+                colClasses = c(date = "Date"),
+                comment.char = "#")
+
+# Average both sources
+co2$price <- apply(co2[, c("EEX", "carbix")], 1, mean, na.rm = TRUE)
+
+# Average over years
+ddply(
 
 co2.cost <- 14.65 * 0.8343
 fuels$net.price <- fuels$price + fuels$emissions * co2.cost * (100/1000)
@@ -73,7 +89,21 @@ fuels$net.price <- fuels$price + fuels$emissions * co2.cost * (100/1000)
 ## Units: Sterling value of currency unit (GBP / EUR).
 
 xrate <- data.frame(year = 1998:2011,
-                    EUR = c(0.67645, 0.6575918985, 0.608754
+                    EUR = c(0.67645, # 1998
+                      0.6575918985,  # 1999
+                      0.608754,      # 2000 
+                      0.6216972334,  # 2001
+                      0.628694,      # 2002
+                      0.691706,      # 2003
+                      0.67842605,    # 2004
+                      0.68371393,    # 2005
+                      0.68184917,    # 2006
+                      0.684755,      # 2007
+                      0.79453,       # 2008
+                      0.89008,       # 2009
+                      0.8573,        # 2010
+                      0.8683         # 2011 
+                      ))       
 
 
 ## Emissions factors, 2009

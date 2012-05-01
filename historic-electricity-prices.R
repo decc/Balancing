@@ -71,5 +71,5 @@ prices <- ddply(mid,
 prices$datetime <- as.POSIXct(prices$sett.date, tz = "Europe/London") +
   dhours((prices$sett.period - 1) * 0.5)
 
-save(prices, data = "historic-prices.RData")
+save(prices, data = "historic-electricity-prices.RData")
 

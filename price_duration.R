@@ -9,7 +9,7 @@ library("lubridate") # for dates and times
 
 source("theme_DECC.R")
 
-load("historic-prices.RData")
+load("historic-electricity-prices.RData")
 ## Add useful date fields. 
 prices$year     <- year(prices$sett.date)
 prices$month    <- month(prices$sett.date, label = TRUE, abbr = FALSE) # Add the names of the months
