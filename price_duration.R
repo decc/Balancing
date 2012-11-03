@@ -1,5 +1,7 @@
 ## This file computes, draws, and annotates an annual price-duration
-## curve for the UK wholesale electricity market
+## curve for the UK wholesale electricity market. It also computes the
+## annual profit (revenue from selling electricity less the cost of
+## buying it) for two limiting cases of storage.
 
 library("ggplot2")   # charts
 library("plyr")      # split-apply-combine analysis
@@ -14,8 +16,8 @@ load("historic-electricity-prices.RData")
 prices$year     <- year(prices$sett.date)
 prices$month    <- month(prices$sett.date, label = TRUE, abbr = FALSE) # Add the names of the months
 
-## Remove NAs, sort the settlement periods by decreasing price within
-## each year.
+## Remove NAs; and sort the settlement periods by decreasing price
+## within each year.
 
 price_duration <-
   ddply(prices[!is.na(prices$price), c("year", "price")],   
@@ -28,7 +30,7 @@ price_duration <-
 
 
 
-## Produce plots
+## PRODUCE PLOTS
 ## =============
 
 ## Set up output device
